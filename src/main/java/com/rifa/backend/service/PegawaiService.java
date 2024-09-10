@@ -1,13 +1,11 @@
 package com.rifa.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.query.Procedure;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rifa.backend.entity.Data;
-import com.rifa.backend.model.Cabang;
 import com.rifa.backend.model.Pegawai;
 import com.rifa.backend.repository.PegawaiRepository;
 
@@ -48,8 +46,8 @@ public class PegawaiService {
         pegawaiRepository.deleteById(kodePegawai);
     }
     
-    public List<Data> filterpegawai(PegawaiFilter filter){
-    	return pegawaiRepository.filter(filter);
+    public List<Data> filterpegawai(PegawaiFilter filter, int page, int size){
+    	return pegawaiRepository.filter(filter, page, size);
     }
     public Pegawai findbyid(int kodePegawai) {
     	return pegawaiRepository.findById(kodePegawai);

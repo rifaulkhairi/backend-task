@@ -80,55 +80,53 @@ public class PegawaiRepository {
 	
 
     
-    public List<Data> filter(PegawaiFilter filter) {
-        // Create a map to hold the parameters
+    public List<Data> filter(PegawaiFilter filter, int page, int size) {
         Map<String, Object> params = new HashMap<>();
 
         if (filter.getDaysToExpire() != null) {
             params.put("DaysToExpire", filter.getDaysToExpire());
         }
-        
 
-        // Execute the stored procedure with the parameters
+        // Pagination parameters
+        params.put("PageNumber", page);
+        params.put("PageSize", size);
+//        System.out.println("page = "+ page+ "size = "+size);
+
+        // Execute the stored procedure
         Map<String, Object> result = simpleJdbcCall.execute(params);
 
-        
         return mapResultToPegawai(result);
     }
 
+    // Helper function to map the result set to List<Data>
     private List<Data> mapResultToPegawai(Map<String, Object> result) {
-        // Extract the result set from the returned Map
         List<Map<String, Object>> rows = (List<Map<String, Object>>) result.get("#result-set-1");
-
-        // Check if rows is null
         if (rows == null) {
-            return new ArrayList<>(); // Return empty list if no rows found
+            return new ArrayList<>();
         }
 
-        List<Data> listdatapegawai = new ArrayList<>();
-
-        // Loop through the result set and map each row to a Pegawai object
+        List<Data> listDataPegawai = new ArrayList<>();
         for (Map<String, Object> row : rows) {
-             Data datapgawai= new Data();
+            Data dataPegawai = new Data();
 
-            // Handle potential null values while mapping
-            datapgawai.setKodePegawai((row.get("KodePegawai") != null) ? ((Number) row.get("KodePegawai")).longValue() : null);
-            datapgawai.setNamaPegawai((String) row.get("NamaPegawai"));
-            datapgawai.setKodeCabang((row.get("KodeCabang") != null) ? ((Number) row.get("KodeCabang")).intValue() : null);
-            datapgawai.setKodeJabatan((row.get("KodeJabatan") != null) ? ((Number) row.get("KodeJabatan")).intValue() : null);
-            datapgawai.setNamaCabang((String) row.get("NamaCabang"));
-            datapgawai.setNamaCJabatan((String) row.get("NamaJabatan"));
+            // Map the result with null safety
+            dataPegawai.setKodePegawai((row.get("KodePegawai") != null) ? ((Number) row.get("KodePegawai")).longValue() : null);
+            dataPegawai.setNamaPegawai((String) row.get("NamaPegawai"));
+            dataPegawai.setKodeCabang((row.get("KodeCabang") != null) ? ((Number) row.get("KodeCabang")).intValue() : null);
+            dataPegawai.setKodeJabatan((row.get("KodeJabatan") != null) ? ((Number) row.get("KodeJabatan")).intValue() : null);
+            dataPegawai.setNamaCabang((String) row.get("NamaCabang"));
+            dataPegawai.setNamaCJabatan((String) row.get("NamaJabatan"));
 
-            // Convert date fields, making sure nulls are handled
-            datapgawai.setTanggalMulaiKontrak((row.get("TanggalMulaiKontrak") != null) 
-                ? ((java.sql.Date) row.get("TanggalMulaiKontrak")).toLocalDate() : null);
-            datapgawai.setTanggalHabisKontrak((row.get("TanggalHabisKontrak") != null) 
-                ? ((java.sql.Date) row.get("TanggalHabisKontrak")).toLocalDate() : null);
+            // Convert dates with null safety
+            dataPegawai.setTanggalMulaiKontrak((row.get("TanggalMulaiKontrak") != null)
+                    ? ((java.sql.Date) row.get("TanggalMulaiKontrak")).toLocalDate() : null);
+            dataPegawai.setTanggalHabisKontrak((row.get("TanggalHabisKontrak") != null)
+                    ? ((java.sql.Date) row.get("TanggalHabisKontrak")).toLocalDate() : null);
 
-            listdatapegawai.add(datapgawai);
+            listDataPegawai.add(dataPegawai);
         }
 
-        return listdatapegawai;
+        return listDataPegawai;
     }
 
     
